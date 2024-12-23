@@ -6,6 +6,7 @@ from core.config import cfg, update_cfg
 from torch_geometric.datasets import ZINC, TUDataset
 from core.data_utils.exp import PlanarSATPairsDataset
 from core.transform import PositionalEncodingTransform, GraphJEPAPartitionTransform
+from core.custom_datasets import StepTreeDataset, SMCADDataset
 
 
 def calculate_stats(dataset):
@@ -27,7 +28,7 @@ def create_dataset(cfg):
                                                 metis=cfg.metis.enable,
                                                 drop_rate=cfg.metis.drop_rate,
                                                 num_hops=cfg.metis.num_hops,
-                                                is_directed=cfg.dataset == 'TreeDataset',
+                                                is_directed=cfg.dataset == 'TreeDataset' or cfg.dataset =='SMCAD',
                                                 patch_rw_dim=cfg.pos_enc.patch_rw_dim,
                                                 patch_num_diff=cfg.pos_enc.patch_num_diff,
                                                 num_context=cfg.jepa.num_context, 
@@ -38,7 +39,7 @@ def create_dataset(cfg):
                                             metis=cfg.metis.enable,
                                             drop_rate=0.0,
                                             num_hops=cfg.metis.num_hops,
-                                            is_directed=cfg.dataset == 'TreeDataset',
+                                            is_directed=cfg.dataset == 'TreeDataset' or cfg.dataset =='SMCAD', #or cfg.dataset == 'SMCAD',
                                             patch_rw_dim=cfg.pos_enc.patch_rw_dim,
                                             patch_num_diff=cfg.pos_enc.patch_num_diff,
                                             num_context=cfg.jepa.num_context, 
@@ -63,12 +64,38 @@ def create_dataset(cfg):
             pre_transform = Compose([Constant(value=0, cat=False), pre_transform])
 
         dataset = TUDataset(root='dataset/TUD', name=cfg.dataset, pre_transform=pre_transform)
-
+    
         return dataset, transform_train, transform_eval
 
     elif cfg.dataset == 'exp-classify':
         root = "dataset/EXP/"
         dataset = PlanarSATPairsDataset(root, pre_transform=pre_transform)
+
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset == 'STEPTREE_GG':
+        root = "dataset/STEPTREE_GG/"
+        dataset = StepTreeDataset(root, pre_transform=pre_transform)
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset == 'SMCAD_GG':
+        root = "dataset/SMCAD_GG/"
+        dataset = SMCADDataset(root, pre_transform=pre_transform)
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset == 'SMCAD_CADNET_10':
+        root = "dataset/CADNET_10/"
+        dataset = SMCADDataset(root, pre_transform=pre_transform, cadnet=True)
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset == 'SMCAD_CADNET':
+        root = "dataset/CADNET/"
+        dataset = SMCADDataset(root, pre_transform=pre_transform, cadnet=True)
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset == 'SMCAD_SMCAD':
+        root = "dataset/SMCAD_SMCAD/"
+        dataset = SMCADDataset(root, pre_transform=pre_transform)
         return dataset, transform_train, transform_eval
 
     else:

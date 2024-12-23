@@ -23,6 +23,41 @@ def create_model(cfg):
         edge_type = 'Linear'
         nout = 2
 
+    elif cfg.dataset == 'STEPTREE_GG':
+        nfeat_node = 1
+        nfeat_edge = 1
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 24
+
+    elif cfg.dataset == 'SMCAD_GG':
+        nfeat_node = 7
+        nfeat_edge = 3
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 24
+
+    elif cfg.dataset == 'SMCAD_CADNET_10':
+        nfeat_node = 7
+        nfeat_edge = 3
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 10
+    
+    elif cfg.dataset == 'SMCAD_CADNET':
+        nfeat_node = 7
+        nfeat_edge = 3
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 42
+    
+    elif cfg.dataset == 'SMCAD_SMCAD':
+        nfeat_node = 7
+        nfeat_edge = 3
+        node_type = 'Linear'
+        edge_type = 'Linear'
+        nout = 24
+
     elif cfg.dataset == 'PROTEINS':
         nfeat_node = 3
         nfeat_edge = 1
@@ -86,7 +121,7 @@ def create_model(cfg):
                 n_patches=cfg.metis.n_patches,
                 patch_rw_dim=cfg.pos_enc.patch_rw_dim,
                 num_context_patches=cfg.jepa.num_context,
-                num_target_patches=cfg.jepa.num_targets
+                num_target_patches=cfg.jepa.num_targets,
             ) 
         else:
             print('Not supported...')

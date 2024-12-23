@@ -1,0 +1,35 @@
+dataset: SMCAD_CADNET
+num_workers: 8
+model:
+  gMHA_type: Hadamard
+  gnn_type: GINEConv
+  nlayer_gnn: 3
+  nlayer_mlpmixer: 4
+  hidden_size: 512
+train:
+  runs: 1
+  epochs: 30
+  batch_size: 128
+  lr: 0.0001
+  lr_patience: 20 # Anzahl Schritte, bevor Lernrate reduziert wird
+  lr_decay: 0.5 # Faktor, um den Lernrate reduziert wird
+  wd: 0.0 # L2-Regularisierung, zur Vermeidung von Overfitting
+  dropout: 0.0 # Droput-Rate für die Regulierung während des Trainings
+  mlpmixer_dropout: 0.0 # Dropout-Rate für MLPMixer
+  min_lr: 0.0000001
+  multiscale: True # Aktiviert multiscale-training
+metis:
+  enable: True # Aktiviert Metis-Partitionierung
+  online: True # Aktivert Online-Datenaugmentation durch Partitionierung
+  n_patches: 256
+  drop_rate: 0.3
+  num_hops: 1
+pos_enc:
+  rw_dim: 40 # These make it such that we don't use node pes
+  patch_rw_dim: 40 # Make equal to above for new version
+  lap_dim: 0
+  patch_num_diff: 0
+jepa:
+  num_context: 1
+  num_targets: 4
+device: 0

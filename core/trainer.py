@@ -304,6 +304,8 @@ def run_k_fold(cfg, create_dataset, create_model, train, test, evaluator=None, k
             lin_model = LogisticRegression(max_iter=10000)
             lin_model.fit(X_train, y_train)
             lin_predictions = lin_model.predict(X_test)
+            print('True:', y_test)
+            print('Predicted:', lin_predictions)
             lin_accuracy = accuracy_score(y_test, lin_predictions)
             acc.append(lin_accuracy)
 
@@ -341,3 +343,59 @@ def run_k_fold(cfg, create_dataset, create_model, train, test, evaluator=None, k
     print('Averages over 5 runs:')
     print(run_metrics[:, 0].mean(), run_metrics[:, 1].mean())
     print()
+
+def linear(cfg, create_dataset):
+
+    dataset, transform, transform_eval = create_dataset(cfg)
+    k_fold_indices = k_fold(dataset, cfg.k)
+
+    for fold, (train_idx, test_idx) in enumerate(zip(*k_fold_indices)):
+        train_dataset = dataset[train_idx]
+        test_dataset = dataset[test_idx]
+        train_dataset.transform = transform
+        test_dataset.transform = transform_eval
+        test_dataset = [x for x in test_dataset]
+
+        if not cfg.metis.online:
+            train_dataset = [x for x in train_dataset]
+
+        train_loader = DataLoader(
+            train_dataset, cfg.train.batch_size, shuffle=True, num_workers=cfg.num_workers)
+        test_loader = DataLoader(
+            test_dataset,  cfg.train.batch_size, shuffle=False, num_workers=cfg.num_workers)
+
+        X_train, y_train = [], []
+        X_test, y_test = [], []
+
+        # Extracting training features and labels in Scikit-Learn api
+        for data in train_loader:
+            data.to(cfg.device)
+            with torch.no_grad():
+                X_train.append(data.x.detach().cpu().numpy())
+                y_train.append(data.y.detach().cpu().numpy())
+
+        # Concatenate the lists into numpy arrays
+        X_train = np.concatenate(X_train, axis=0)
+        y_train = np.concatenate(y_train, axis=0)
+
+        for data in test_loader:
+            data.to(cfg.device)
+            with torch.no_grad():
+                X_test.append(data.x.detach().cpu().numpy())
+                y_test.append(data.y.detach().cpu().numpy())
+
+        # Concatenate the lists into numpy arrays
+        X_test = np.concatenate(X_test, axis=0)
+        y_test = np.concatenate(y_test, axis=0)
+
+        print("Data shapes:", X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+
+        # 1) L2 penalized logistic regression for fine tuning
+        lin_model = LogisticRegression(max_iter=10000)
+        lin_model.fit(X_train, y_train)
+        lin_predictions = lin_model.predict(X_test)
+        print('True:', y_test)
+        print('Predicted:', lin_predictions)
+        lin_accuracy = accuracy_score(y_test, lin_predictions)
+        print('Acc:',lin_accuracy)
+        print('Fold: ', fold)

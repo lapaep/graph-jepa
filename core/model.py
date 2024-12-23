@@ -52,6 +52,7 @@ class GraphJepa(nn.Module):
         if self.patch_rw_dim > 0:
             self.patch_rw_encoder = MLP(self.patch_rw_dim, nhid, 1)
 
+
         self.input_encoder = FeatureEncoder(node_type, nfeat_node, nhid)
         self.edge_encoder = FeatureEncoder(edge_type, nfeat_edge, nhid)
 
