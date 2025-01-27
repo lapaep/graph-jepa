@@ -2,7 +2,7 @@ dataset: SMCAD_GG
 num_workers: 8
 model:
   gMHA_type: Hadamard
-  gnn_type: GINEConv
+  gnn_type: GATConv
   nlayer_gnn: 3
   nlayer_mlpmixer: 4
   hidden_size: 512

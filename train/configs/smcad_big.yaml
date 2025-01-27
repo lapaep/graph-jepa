@@ -1,17 +1,17 @@
-dataset: STEPTREE_GG
+dataset: SMCAD_BIG
 num_workers: 8
 model:
   gMHA_type: Hadamard
-  gnn_type: GATConv
-  nlayer_gnn: 3
-  nlayer_mlpmixer: 4
+  gnn_type: GINEConv
+  nlayer_gnn: 2
+  nlayer_mlpmixer: 3
   hidden_size: 512
 train:
   runs: 1
-  epochs: 30
-  batch_size: 512
-  lr: 0.0001
-  lr_patience: 20 # Anzahl Schritte, bevor Lernrate reduziert wird
+  epochs: 10
+  batch_size: 16
+  lr: 0.000001
+  lr_patience: 10 # Anzahl Schritte, bevor Lernrate reduziert wird
   lr_decay: 0.5 # Faktor, um den Lernrate reduziert wird
   wd: 0.0 # L2-Regularisierung, zur Vermeidung von Overfitting
   dropout: 0.0 # Droput-Rate für die Regulierung während des Trainings
@@ -21,8 +21,8 @@ train:
 metis:
   enable: True # Aktiviert Metis-Partitionierung
   online: False # Aktivert Online-Datenaugmentation durch Partitionierung
-  n_patches: 256
-  drop_rate: 0.3
+  n_patches: 128
+  drop_rate: 0.1
   num_hops: 1
 pos_enc:
   rw_dim: 40 # These make it such that we don't use node pes
