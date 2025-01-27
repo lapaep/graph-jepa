@@ -6,7 +6,7 @@ from core.config import cfg, update_cfg
 from torch_geometric.datasets import ZINC, TUDataset
 from core.data_utils.exp import PlanarSATPairsDataset
 from core.transform import PositionalEncodingTransform, GraphJEPAPartitionTransform
-from core.custom_datasets import StepTreeDataset, SMCADDataset
+from core.custom_datasets import StepTreeDataset, SMCADDataset, SMCADBIGDataset, ABCDataset
 
 
 def calculate_stats(dataset):
@@ -74,28 +74,28 @@ def create_dataset(cfg):
         return dataset, transform_train, transform_eval
     
     elif cfg.dataset == 'STEPTREE_GG':
-        root = "dataset/STEPTREE_GG/"
+        root = f"dataset/{cfg.dataset}/"
         dataset = StepTreeDataset(root, pre_transform=pre_transform)
         return dataset, transform_train, transform_eval
     
-    elif cfg.dataset == 'SMCAD_GG':
-        root = "dataset/SMCAD_GG/"
+    elif cfg.dataset in ['SMCAD_GG', 'SMCAD_SMCAD']:
+        root = f"dataset/{cfg.dataset}/"
         dataset = SMCADDataset(root, pre_transform=pre_transform)
         return dataset, transform_train, transform_eval
     
-    elif cfg.dataset == 'SMCAD_CADNET_10':
-        root = "dataset/CADNET_10/"
+    elif cfg.dataset == 'SMCAD_BIG':
+        root = f"dataset/{cfg.dataset}/"
+        dataset = SMCADBIGDataset(root, pre_transform=pre_transform)
+        return dataset, transform_train, transform_eval
+    
+    elif cfg.dataset in ['SMCAD_CADNET_10', 'SMCAD_CADNET']:
+        root = f"dataset/{cfg.dataset}/"
         dataset = SMCADDataset(root, pre_transform=pre_transform, cadnet=True)
         return dataset, transform_train, transform_eval
     
-    elif cfg.dataset == 'SMCAD_CADNET':
-        root = "dataset/CADNET/"
-        dataset = SMCADDataset(root, pre_transform=pre_transform, cadnet=True)
-        return dataset, transform_train, transform_eval
-    
-    elif cfg.dataset == 'SMCAD_SMCAD':
-        root = "dataset/SMCAD_SMCAD/"
-        dataset = SMCADDataset(root, pre_transform=pre_transform)
+    elif cfg.dataset == 'ABC':
+        root = f"dataset/{cfg.dataset}/"
+        dataset = ABCDataset(root, pre_transform=pre_transform)
         return dataset, transform_train, transform_eval
 
     else:

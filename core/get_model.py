@@ -51,7 +51,7 @@ def create_model(cfg):
         edge_type = 'Linear'
         nout = 42
     
-    elif cfg.dataset == 'SMCAD_SMCAD':
+    elif cfg.dataset in ['SMCAD_SMCAD','SMCAD_BIG','ABC']:
         nfeat_node = 7
         nfeat_edge = 3
         node_type = 'Linear'
